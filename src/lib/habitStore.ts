@@ -16,6 +16,7 @@ export interface HabitData {
 const HABITS_KEY = 'habit-tracker-habits';
 const DATA_KEY = 'habit-tracker-data';
 const ONBOARDED_KEY = 'habit-tracker-onboarded';
+const USERNAME_KEY = 'habit-tracker-username';
 
 export const getHabits = (): Habit[] => {
   const stored = localStorage.getItem(HABITS_KEY);
@@ -51,6 +52,14 @@ export const isOnboarded = (): boolean => {
 
 export const setOnboarded = (value: boolean) => {
   localStorage.setItem(ONBOARDED_KEY, value ? 'true' : 'false');
+};
+
+export const getUserName = (): string => {
+  return localStorage.getItem(USERNAME_KEY) || '';
+};
+
+export const setUserName = (name: string) => {
+  localStorage.setItem(USERNAME_KEY, name);
 };
 
 export const getDateKey = (date: Date): string => {

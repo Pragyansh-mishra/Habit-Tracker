@@ -13,6 +13,7 @@ import {
   getDaysInMonth,
   getFirstDayOfMonth,
   getDateKey,
+  getUserName,
   Habit,
   HabitData,
 } from "@/lib/habitStore";
@@ -33,6 +34,7 @@ export const Tracker = ({ habits }: TrackerProps) => {
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [habitData, setHabitData] = useState<HabitData>(getHabitData());
+  const userName = getUserName();
 
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth);
@@ -91,7 +93,7 @@ export const Tracker = ({ habits }: TrackerProps) => {
           >
             <div>
               <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                Habit Tracker
+                Hey {userName}! 👋
               </h1>
               <p className="text-muted-foreground">Track your daily progress</p>
             </div>

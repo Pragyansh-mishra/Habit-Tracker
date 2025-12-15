@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, Sparkles, ArrowRight } from "lucide-react";
+import { Plus, X, Sparkles, ArrowRight, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Habit, setHabits, setOnboarded } from "@/lib/habitStore";
+import { Habit, setHabits, setOnboarded, setUserName } from "@/lib/habitStore";
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -30,9 +30,10 @@ const suggestedHabits = [
 ];
 
 export const Onboarding = ({ onComplete }: OnboardingProps) => {
+  const [step, setStep] = useState<'name' | 'habits'>('name');
+  const [userName, setUserNameLocal] = useState("");
   const [habits, setLocalHabits] = useState<Habit[]>([]);
   const [newHabitName, setNewHabitName] = useState("");
-  const [selectedColor, setSelectedColor] = useState(0);
 
   const addHabit = (name: string = newHabitName) => {
     if (name.trim() && habits.length < 6) {
@@ -50,6 +51,13 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
     setLocalHabits(habits.filter(h => h.id !== id));
   };
 
+  const handleNameSubmit = () => {
+    if (userName.trim()) {
+      setUserName(userName.trim());
+      setStep('habits');
+    }
+  };
+
   const handleComplete = () => {
     if (habits.length > 0) {
       setHabits(habits);
@@ -60,28 +68,80 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-lg"
-      >
-        <div className="text-center mb-8">
+      <AnimatePresence mode="wait">
+        {step === 'name' ? (
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-            className="w-20 h-20 mx-auto mb-4 rounded-2xl habit-gradient flex items-center justify-center shadow-glow"
+            key="name-step"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-lg"
           >
-            <Sparkles className="w-10 h-10 text-primary-foreground" />
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                className="w-20 h-20 mx-auto mb-4 rounded-2xl habit-gradient flex items-center justify-center shadow-glow"
+              >
+                <User className="w-10 h-10 text-primary-foreground" />
+              </motion.div>
+              <h1 className="font-display text-3xl font-bold text-foreground mb-2">
+                Welcome!
+              </h1>
+              <p className="text-muted-foreground">
+                What should we call you?
+              </p>
+            </div>
+
+            <div className="bg-card rounded-2xl p-6 shadow-medium border border-border mb-6">
+              <Input
+                value={userName}
+                onChange={(e) => setUserNameLocal(e.target.value)}
+                placeholder="Enter your name..."
+                className="text-center text-lg py-6"
+                onKeyDown={(e) => e.key === "Enter" && handleNameSubmit()}
+                maxLength={30}
+                autoFocus
+              />
+            </div>
+
+            <Button
+              onClick={handleNameSubmit}
+              disabled={!userName.trim()}
+              className="w-full py-6 text-lg font-semibold"
+              size="lg"
+            >
+              Continue
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
           </motion.div>
-          <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-            Create Your Habits
-          </h1>
-          <p className="text-muted-foreground">
-            Add up to 6 habits you want to track daily
-          </p>
-        </div>
+        ) : (
+          <motion.div
+            key="habits-step"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-lg"
+          >
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                className="w-20 h-20 mx-auto mb-4 rounded-2xl habit-gradient flex items-center justify-center shadow-glow"
+              >
+                <Sparkles className="w-10 h-10 text-primary-foreground" />
+              </motion.div>
+              <h1 className="font-display text-3xl font-bold text-foreground mb-2">
+                Hey {userName}! 👋
+              </h1>
+              <p className="text-muted-foreground">
+                Add up to 6 habits you want to track daily
+              </p>
+            </div>
 
         <div className="bg-card rounded-2xl p-6 shadow-medium border border-border mb-6">
           <div className="flex gap-2 mb-4">
@@ -172,10 +232,12 @@ export const Onboarding = ({ onComplete }: OnboardingProps) => {
           </Button>
         </motion.div>
 
-        <p className="text-center text-sm text-muted-foreground mt-4">
-          {habits.length}/6 habits added
-        </p>
-      </motion.div>
+            <p className="text-center text-sm text-muted-foreground mt-4">
+              {habits.length}/6 habits added
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

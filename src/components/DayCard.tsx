@@ -53,16 +53,30 @@ export const DayCard = ({ day, month, year, habits, dayData, onToggle, isToday, 
         </motion.span>
       </div>
       
-      <div className="space-y-0.5">
+      <div className="flex flex-wrap gap-1 md:block md:space-y-0.5">
         {habits.map((habit) => (
-          <HabitCheckbox
-            key={habit.id}
-            checked={dayData[habit.id] || false}
-            onChange={() => onToggle(habit.id)}
-            colorIndex={habit.colorIndex}
-            label={habit.name}
-            compact
-          />
+          <div key={habit.id} className="md:w-full">
+            {/* Mobile: checkbox only */}
+            <div className="md:hidden">
+              <HabitCheckbox
+                checked={dayData[habit.id] || false}
+                onChange={() => onToggle(habit.id)}
+                colorIndex={habit.colorIndex}
+                label=""
+                compact
+              />
+            </div>
+            {/* Desktop: checkbox with label */}
+            <div className="hidden md:block">
+              <HabitCheckbox
+                checked={dayData[habit.id] || false}
+                onChange={() => onToggle(habit.id)}
+                colorIndex={habit.colorIndex}
+                label={habit.name}
+                compact
+              />
+            </div>
+          </div>
         ))}
       </div>
     </motion.div>
